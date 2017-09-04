@@ -1,0 +1,32 @@
+﻿@model Stocky.ViewModels.CategoriesViewModel
+@{
+    ViewBag.Title = "Categories";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewBag.Title</h1>
+
+@if (Model.Categories.Count <= 0)
+{
+    <text> No Categories have been created </text>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Category Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var category in Model.Categories)
+        {
+            <tr>
+                <td>@category.Name</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+
