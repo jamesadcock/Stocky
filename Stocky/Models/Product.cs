@@ -7,11 +7,12 @@ namespace Stocky.Models
 {
     public class Product
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Sku { get; set; }
-        public List<string> CategroiesList { get; set; }
         public string Description { get; set; }
-        public double Price { get; set; }   
+        public double Price { get; set; }
+        public Category Category { get; set; }
+        public int CategoryId { get; set; }
     }
 }

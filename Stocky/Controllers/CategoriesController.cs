@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,39 +11,26 @@ namespace Stocky.Controllers
 {
     public class CategoriesController : Controller
     {
-        // Veiw a table of all categories
-        [Route("categories")]
-        public ViewResult ViewCategories()
+        private ApplicationDbContext _context;
+
+
+        public CategoriesController()
         {
-            var categories = new List<Category>
-            {
-                new Category() {Id = Guid.NewGuid(), Name = "Computer Games"},
-                new Category() {Id = Guid.NewGuid(), Name = "Consoles"},
-                new Category() {Id = Guid.NewGuid(), Name = "DVDs"},
-            };
-
-            var viewModel = new CategoriesViewModel
-            {
-                Categories = categories
-            };
-
-            return View(viewModel);
+            _context = new ApplicationDbContext();
         }
 
-        // Add a new category
-        [Route("categories/addcategory")]
-        public ViewResult AddCategory()
+
+        protected override void Dispose(bool disposing)
         {
-            var category = new Category() { Id = Guid.NewGuid(), Name = "Add Category" };
-            return View("AddEditCategory", category);
+            _context.Dispose();
         }
 
-        // Edit an existing category
-        [Route("categories/editcategory/{id:guid}")]
-        public ViewResult EditCategory(Guid id)
+
+        public ViewResult Index()
         {
-            var category = new Category() { Id = Guid.NewGuid(), Name = "Computer Games" };
-            return View("AddEditCategory", category);
+            var categories = _context.Categories.ToList();
+
+            return View(categories);
         }
 
     }

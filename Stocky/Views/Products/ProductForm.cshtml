@@ -1,0 +1,34 @@
+﻿@model Stocky.ViewModels.ProductFormViewModel
+@{
+    ViewBag.Title = "New Product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>New</h2>
+
+@using (@Html.BeginForm("Create", "Products"))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.Product.Name)
+        @Html.TextBoxFor(m => m.Product.Name, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Product.Sku)
+        @Html.TextBoxFor(m => m.Product.Sku, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Product.Category)
+        @Html.DropDownListFor(m => m.Product.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "Select Category", new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Product.Description)
+        @Html.TextAreaFor(m => m.Product.Description, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Product.Price)
+        @Html.TextBoxFor(m => m.Product.Price, new { @class = "form-control" })
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+}
+

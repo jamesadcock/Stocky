@@ -18,7 +18,7 @@ namespace Stocky
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}",
-                defaults: new { controller = "Products", action = "ViewProducts"}
+                defaults: new { controller = "Products", action = "Index"}
             );
         }
     }

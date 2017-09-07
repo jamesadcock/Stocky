@@ -1,4 +1,5 @@
 ﻿using System;
+using  System.Data.Entity;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,43 +7,70 @@ using System.Web.Mvc;
 using Stocky.Models;
 using Stocky.ViewModels;
 
+
 namespace Stocky.Controllers
 {
     public class ProductsController : Controller
     {
+        private ApplicationDbContext _context;
 
-        // Veiw a table of all categories
-        [Route("")]
-        public ViewResult ViewProducts()
+
+        public ProductsController()
         {
-            var products = new List<Product>
+            _context = new ApplicationDbContext();
+        }
+
+
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose(); 
+        }
+
+
+        public ActionResult New()
+        {
+            var categories = _context.Categories.ToList();
+            var viewModel = new ProductFormViewModel()
             {
-                new Product()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Adventure",
-                    Price = 10.00,
-                    Sku = "000001",
-                    CategroiesList = new List<string>() { "games"},
-                    Description = "Atari 2600 Clasic"
-                },
-                new Product()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Zelda",
-                    Price = 25.00,
-                    Sku = "000002",
-                    CategroiesList = new List<string>() { "games"},
-                    Description = "Snes clasic"
-                }
+                Categories = categories
+            };
+            return View("CustomerForm", viewModel);
+        }
+
+
+        [HttpPost]
+        public ActionResult Create(Product product)
+        {
+            _context.Products.Add(product);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Products");
+        }
+
+
+        public ViewResult Index()
+        {
+            var products = _context.Products.Include(p => p.Category).ToList();
+
+            return View(products);
+        }
+
+        public ActionResult Edit(int id)
+        {
+            var product = _context.Products.SingleOrDefault(p => p.Id == id);
+
+            if (product == null)
+                return HttpNotFound();
+
+            var viewModel = new ProductFormViewModel()
+            {
+                Product = product,
+                Categories = _context.Categories.ToList()
+
             };
 
-            var viewModel = new ProductsViewModel()
-            {
-                Products = products
-            };
+            return View("ProductForm", viewModel);
 
-            return View(viewModel);
         }
     }
 

@@ -1,12 +1,15 @@
-﻿@model Stocky.ViewModels.ProductsViewModel
+﻿@model IEnumerable<Stocky.Models.Product>
 @{
     ViewBag.Title = "Products";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>@ViewBag.Title</h1>
+<p>
+    @Html.ActionLink("Add Product", "New", "Products", null, new { @class = "btn btn-primary" })
+</p>
 
-@if (Model.Products.Count <= 0)
+@if (!Model.Any())
 {
     <text> No Produtcs have been created </text>
 }
@@ -20,18 +23,20 @@ else
                 <th>Product Description</th>
                 <th>Price</th>
                 <th>Category</th>
+                <th>Actions</th>
 
             </tr>
         </thead>
         <tbody>
-            @foreach (var product in Model.Products)
+            @foreach (var product in Model)
             {
                 <tr>
                     <td>@product.Name</td>
                     <td>@product.Sku</td>
                     <td>@product.Description</td>
                     <td>@product.Price</td>
-                    <td>@product.CategroiesList[0]</td>
+                    <td>@product.Category.Name</td>
+                    <td>@Html.ActionLink("Edit", "Edit", "Products", new {id = product.Id}, null)</td>
                 </tr>
             }
         </tbody>

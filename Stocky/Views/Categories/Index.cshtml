@@ -1,4 +1,4 @@
-﻿@model Stocky.ViewModels.CategoriesViewModel
+﻿@model IEnumerable<Stocky.Models.Category>
 @{
     ViewBag.Title = "Categories";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -6,7 +6,7 @@
 
 <h1>@ViewBag.Title</h1>
 
-@if (Model.Categories.Count <= 0)
+@if (!Model.Any())
 {
     <text> No Categories have been created </text>
 }
@@ -19,7 +19,7 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var category in Model.Categories)
+        @foreach (var category in Model)
         {
             <tr>
                 <td>@category.Name</td>
