@@ -7,7 +7,7 @@
 
 <h2>New</h2>
 
-@using (@Html.BeginForm("Create", "Products"))
+@using (@Html.BeginForm("Save", "Products"))
 {
     <div class="form-group">
         @Html.LabelFor(m => m.Product.Name)
@@ -29,6 +29,7 @@
         @Html.LabelFor(m => m.Product.Price)
         @Html.TextBoxFor(m => m.Product.Price, new { @class = "form-control" })
     </div>
+    @Html.HiddenFor(p => p.Product.Id)
     <button type="submit" class="btn btn-primary">Save</button>
 }
 

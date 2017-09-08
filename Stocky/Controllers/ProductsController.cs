@@ -34,14 +34,27 @@ namespace Stocky.Controllers
             {
                 Categories = categories
             };
-            return View("CustomerForm", viewModel);
+            return View("ProductForm", viewModel);
         }
 
 
         [HttpPost]
-        public ActionResult Create(Product product)
+        public ActionResult Save(Product product)
         {
-            _context.Products.Add(product);
+            if (product.Id == 0)
+            {
+                _context.Products.Add(product);
+            }
+            else
+            {
+                var productInDb = _context.Products.Single(c => c.Id == product.Id);
+                productInDb.Name = product.Name;
+                productInDb.Sku = product.Sku;
+                productInDb.Description = product.Description;
+                productInDb.Category = product.Category;
+                productInDb.Price = product.Price;
+
+            }
             _context.SaveChanges();
 
             return RedirectToAction("Index", "Products");
