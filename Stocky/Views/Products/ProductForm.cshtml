@@ -5,7 +5,15 @@
 }
 
 
-<h2>New</h2>
+@if (Model.Product == null)
+{
+    <h1>Add Product</h1>
+}
+else
+{
+    <h1>Edit Product</h1>
+}
+
 
 @using (@Html.BeginForm("Save", "Products"))
 {

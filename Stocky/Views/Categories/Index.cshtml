@@ -6,6 +6,10 @@
 
 <h1>@ViewBag.Title</h1>
 
+<p>
+    @Html.ActionLink("Add Category", "New", "Categories", null, new { @class = "btn btn-primary" })
+</p>
+
 @if (!Model.Any())
 {
     <text> No Categories have been created </text>
@@ -16,6 +20,7 @@ else
         <thead>
         <tr>
             <th>Category Name</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -23,6 +28,7 @@ else
         {
             <tr>
                 <td>@category.Name</td>
+                <td>@Html.ActionLink("Edit", "Edit", "Categories", new {id = category.Id}, null)</td>
             </tr>
         }
         </tbody>
