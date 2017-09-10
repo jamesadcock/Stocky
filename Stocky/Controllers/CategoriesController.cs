@@ -28,14 +28,20 @@ namespace Stocky.Controllers
         public ActionResult New()
         {
             var categories = _context.Categories.ToList();
+            var category = new Category();
   
-            return View("CategoryForm");
+            return View("CategoryForm", category);
         }
 
 
         [HttpPost]
         public ActionResult Save(Category category)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("CategoryForm", category);
+            }
+
             if (category.Id == 0)
             {
                 _context.Categories.Add(category);

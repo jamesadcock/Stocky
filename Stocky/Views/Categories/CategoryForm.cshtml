@@ -5,7 +5,7 @@
 }
 
 
-@if (Model == null)
+@if (Model.Id == 0)
 {
     <h1>Add Category</h1>
 }
@@ -17,13 +17,21 @@ else
 
 @using (@Html.BeginForm("Save", "Categories"))
 {
+    @Html.ValidationSummary(true, "Please fix errors before saving")
+    
     <div class="form-group">
         @Html.LabelFor(c => c.Name)
         @Html.TextBoxFor(c => c.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(c => c.Name)
     </div>
   
     @Html.HiddenFor(c => c.Id)
     <button type="submit" class="btn btn-primary">Save</button>
+}
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
 }
 
 

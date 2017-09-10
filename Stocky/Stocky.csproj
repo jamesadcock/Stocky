@@ -211,6 +211,14 @@
     <Compile Include="Migrations\201709071932400_AddCategoriesForeignKey.Designer.cs">
       <DependentUpon>201709071932400_AddCategoriesForeignKey.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201709091715146_AddsCategoryConstraints.cs" />
+    <Compile Include="Migrations\201709091715146_AddsCategoryConstraints.Designer.cs">
+      <DependentUpon>201709091715146_AddsCategoryConstraints.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201709091722479_AddsProductConstraints.cs" />
+    <Compile Include="Migrations\201709091722479_AddsProductConstraints.Designer.cs">
+      <DependentUpon>201709091722479_AddsProductConstraints.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Category.cs" />
@@ -226,7 +234,7 @@
     <Content Include="Content\bootstrap-paper.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="favicon.ico" />
+    <Content Include="Views\Shared\favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -305,6 +313,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201709071932400_AddCategoriesForeignKey.resx">
       <DependentUpon>201709071932400_AddCategoriesForeignKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201709091715146_AddsCategoryConstraints.resx">
+      <DependentUpon>201709091715146_AddsCategoryConstraints.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201709091722479_AddsProductConstraints.resx">
+      <DependentUpon>201709091722479_AddsProductConstraints.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

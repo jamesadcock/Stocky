@@ -32,7 +32,8 @@ namespace Stocky.Controllers
             var categories = _context.Categories.ToList();
             var viewModel = new ProductFormViewModel()
             {
-                Categories = categories
+                Categories = categories,
+                Product = new Product()
             };
             return View("ProductForm", viewModel);
         }
@@ -41,6 +42,17 @@ namespace Stocky.Controllers
         [HttpPost]
         public ActionResult Save(Product product)
         {
+
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new ProductFormViewModel()
+                {
+                    Product = product,
+                    Categories = _context.Categories.ToList()
+
+                };
+                    return View("ProductForm", viewModel);
+            }
             if (product.Id == 0)
             {
                 _context.Products.Add(product);
