@@ -1,8 +1,5 @@
-﻿using System;
-using  System.Data.Entity;
-using System.Collections.Generic;
+﻿using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Stocky.Models;
 using Stocky.ViewModels;
@@ -12,7 +9,7 @@ namespace Stocky.Controllers
 {
     public class ProductsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
 
         public ProductsController()
@@ -32,22 +29,22 @@ namespace Stocky.Controllers
             var categories = _context.Categories.ToList();
             var viewModel = new ProductFormViewModel()
             {
-                Categories = categories,
-                Product = new Product()
+                Categories = categories
+   
             };
             return View("ProductForm", viewModel);
         }
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Save(Product product)
         {
 
             if (!ModelState.IsValid)
             {
-                var viewModel = new ProductFormViewModel()
+                var viewModel = new ProductFormViewModel(product)
                 {
-                    Product = product,
                     Categories = _context.Categories.ToList()
 
                 };
@@ -80,6 +77,7 @@ namespace Stocky.Controllers
             return View(products);
         }
 
+
         public ActionResult Edit(int id)
         {
             var product = _context.Products.SingleOrDefault(p => p.Id == id);
@@ -87,9 +85,8 @@ namespace Stocky.Controllers
             if (product == null)
                 return HttpNotFound();
 
-            var viewModel = new ProductFormViewModel()
+            var viewModel = new ProductFormViewModel(product)
             {
-                Product = product,
                 Categories = _context.Categories.ToList()
 
             };

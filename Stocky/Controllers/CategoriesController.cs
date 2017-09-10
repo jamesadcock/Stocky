@@ -35,6 +35,7 @@ namespace Stocky.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Save(Category category)
         {
             if (!ModelState.IsValid)

@@ -4,46 +4,38 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-@if (Model.Product.Id == 0)
-{
-    <h1>Add Product</h1>
-}
-else
-{
-    <h1>Edit Product</h1>
-}
-
+<h1>@Model.Title</h1>
 
 @using (@Html.BeginForm("Save", "Products"))
 {
     @Html.ValidationSummary(true, "Please fix errors before saving")
 
     <div class="form-group">
-        @Html.LabelFor(m => m.Product.Name)
-        @Html.TextBoxFor(m => m.Product.Name, new { @class = "form-control" })
-        @Html.ValidationMessageFor(p => p.Product.Name)
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(p => p.Name)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Product.Sku)
-        @Html.TextBoxFor(m => m.Product.Sku, new { @class = "form-control" })
-        @Html.ValidationMessageFor(p => p.Product.Sku)
+        @Html.LabelFor(m => m.Sku)
+        @Html.TextBoxFor(m => m.Sku, new { @class = "form-control" })
+        @Html.ValidationMessageFor(p => p.Sku)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Product.Category)
-        @Html.DropDownListFor(m => m.Product.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "Select Category", new { @class = "form-control" })
+        @Html.LabelFor(m => m.Categories)
+        @Html.DropDownListFor(m => m.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "Select Category", new { @class = "form-control" })
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Product.Description)
-        @Html.TextAreaFor(m => m.Product.Description, new { @class = "form-control" })
-        @Html.ValidationMessageFor(p => p.Product.Description)
+        @Html.LabelFor(m => m.Description)
+        @Html.TextAreaFor(m => m.Description, new { @class = "form-control" })
+        @Html.ValidationMessageFor(p => p.Description)
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Product.Price)
-        @Html.TextBoxFor(m => m.Product.Price, new { @class = "form-control" })
-        @Html.ValidationMessageFor(p => p.Product.Price)
+        @Html.LabelFor(m => m.Price)
+        @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+        @Html.ValidationMessageFor(p => p.Price)
     </div>
-    @Html.HiddenFor(p => p.Product.Id)
+    @Html.HiddenFor(p => p.Id)
+    @Html.AntiForgeryToken()
     <button type="submit" class="btn btn-primary">Save</button>
 }
 
