@@ -22,7 +22,7 @@ else
                 <th>Sku</th>
                 <th>Product Description</th>
                 <th>Price</th>
-                <th>Category</th>
+                <th>Categories</th>
                 <th>Actions</th>
 
             </tr>
@@ -35,7 +35,15 @@ else
                     <td>@product.Sku</td>
                     <td>@product.Description</td>
                     <td>@product.Price</td>
-                    <td>@product.Category.Name</td>
+                    <td>
+                        @foreach (var category in product.Categories)
+                        {
+                            @category.Name;
+                            <text>  </text>
+                            
+                        } 
+                  
+                    </td>
                     <td>@Html.ActionLink("Edit", "Edit", "Products", new {id = product.Id}, null)</td>
                 </tr>
             }

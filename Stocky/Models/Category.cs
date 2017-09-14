@@ -13,5 +13,9 @@ namespace Stocky.Models
         [Required]
         [StringLength(255)]
         public string Name { get; set; }
+
+        public List<Product> Products { get; set; }
+
+        public List<int> ProductIds { get; set; }       
     }
 }

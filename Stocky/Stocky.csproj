@@ -219,6 +219,10 @@
     <Compile Include="Migrations\201709091722479_AddsProductConstraints.Designer.cs">
       <DependentUpon>201709091722479_AddsProductConstraints.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201709101544270_ManyToManyMappingforProductsAndCategories.cs" />
+    <Compile Include="Migrations\201709101544270_ManyToManyMappingforProductsAndCategories.Designer.cs">
+      <DependentUpon>201709101544270_ManyToManyMappingforProductsAndCategories.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Category.cs" />
@@ -319,6 +323,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201709091722479_AddsProductConstraints.resx">
       <DependentUpon>201709091722479_AddsProductConstraints.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201709101544270_ManyToManyMappingforProductsAndCategories.resx">
+      <DependentUpon>201709101544270_ManyToManyMappingforProductsAndCategories.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

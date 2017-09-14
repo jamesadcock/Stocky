@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using Stocky.Models;
@@ -40,7 +41,7 @@ namespace Stocky.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Save(Product product)
         {
-
+            // form validation
             if (!ModelState.IsValid)
             {
                 var viewModel = new ProductFormViewModel(product)
@@ -50,18 +51,24 @@ namespace Stocky.Controllers
                 };
                     return View("ProductForm", viewModel);
             }
+            // create a new product
             if (product.Id == 0)
             {
+
+                product.Categories = ParseProductCategories(product);
                 _context.Products.Add(product);
             }
+            // edit an existing product
             else
             {
                 var productInDb = _context.Products.Single(c => c.Id == product.Id);
                 productInDb.Name = product.Name;
                 productInDb.Sku = product.Sku;
                 productInDb.Description = product.Description;
-                productInDb.Category = product.Category;
                 productInDb.Price = product.Price;
+                productInDb.Categories = ParseProductCategories(product);
+
+
 
             }
             _context.SaveChanges();
@@ -72,7 +79,7 @@ namespace Stocky.Controllers
 
         public ViewResult Index()
         {
-            var products = _context.Products.Include(p => p.Category).ToList();
+            var products = _context.Products.Include(p => p.Categories).ToList();
 
             return View(products);
         }
@@ -80,7 +87,7 @@ namespace Stocky.Controllers
 
         public ActionResult Edit(int id)
         {
-            var product = _context.Products.SingleOrDefault(p => p.Id == id);
+            var product = _context.Products.Include(p => p.Categories).SingleOrDefault(p => p.Id == id); 
 
             if (product == null)
                 return HttpNotFound();
@@ -88,12 +95,32 @@ namespace Stocky.Controllers
             var viewModel = new ProductFormViewModel(product)
             {
                 Categories = _context.Categories.ToList()
-
+                
             };
+
+            viewModel.CategoryIds= new List<int>();
+            foreach (var category in product.Categories)
+            {
+                viewModel.CategoryIds.Add(category.Id);
+            }
 
             return View("ProductForm", viewModel);
 
         }
+
+        
+        public List<Category> ParseProductCategories(Product product)
+        {
+            List<Category> categories = new List<Category>();
+            foreach (var categoryId in product.CategoryIds)
+            {
+                var category = _context.Categories.Single(c => c.Id == categoryId);
+                categories.Add(category);
+            }
+
+            return categories;
+
+        } 
     }
 
 

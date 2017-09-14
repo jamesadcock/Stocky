@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using Stocky.Controllers;
 
 namespace Stocky.Models
 {
@@ -25,7 +26,8 @@ namespace Stocky.Models
         [Required]
         public double Price { get; set; }
 
-        public Category Category { get; set; }
-        public int CategoryId { get; set; }
+        public List<Category> Categories { get; set; }
+
+        public List<int> CategoryIds { get; set; }
     }
 }

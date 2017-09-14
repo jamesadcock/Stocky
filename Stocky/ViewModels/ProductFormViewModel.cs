@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using Stocky.Models;
+using System.Web.WebPages.Html;
 
 namespace Stocky.ViewModels
 {
@@ -33,7 +34,7 @@ namespace Stocky.ViewModels
         [Display(Name = "Category")]
 
         [Required]
-        public int? CategoryId { get; set; }
+        public List<int> CategoryIds { get; set; }
 
 
         public string Title => Id != 0 ? "Edit Product" : "New Product";
@@ -52,7 +53,8 @@ namespace Stocky.ViewModels
             Sku = product.Sku;
             Description = product.Description;
             Price = product.Price;
-            CategoryId = product.CategoryId;
+            CategoryIds= product.CategoryIds;
+
         }
     }
 
