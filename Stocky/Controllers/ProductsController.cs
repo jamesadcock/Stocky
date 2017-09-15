@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
@@ -58,17 +59,16 @@ namespace Stocky.Controllers
                 product.Categories = ParseProductCategories(product);
                 _context.Products.Add(product);
             }
-            // edit an existing product
+            // edit an existing product 
             else
             {
-                var productInDb = _context.Products.Single(c => c.Id == product.Id);
+                var productInDb = _context.Products.Include(p => p.Categories).Single(p => p.Id == product.Id);
+               
                 productInDb.Name = product.Name;
                 productInDb.Sku = product.Sku;
                 productInDb.Description = product.Description;
                 productInDb.Price = product.Price;
                 productInDb.Categories = ParseProductCategories(product);
-
-
 
             }
             _context.SaveChanges();
@@ -109,9 +109,9 @@ namespace Stocky.Controllers
         }
 
         
-        public List<Category> ParseProductCategories(Product product)
+        public Collection<Category> ParseProductCategories(Product product)
         {
-            List<Category> categories = new List<Category>();
+            Collection<Category> categories = new Collection<Category>();
             foreach (var categoryId in product.CategoryIds)
             {
                 var category = _context.Categories.Single(c => c.Id == categoryId);

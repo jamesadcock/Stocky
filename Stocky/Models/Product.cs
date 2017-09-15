@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
@@ -26,7 +27,7 @@ namespace Stocky.Models
         [Required]
         public double Price { get; set; }
 
-        public List<Category> Categories { get; set; }
+        public virtual Collection < Category> Categories { get; set; }
 
         public List<int> CategoryIds { get; set; }
     }
