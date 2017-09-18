@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
+using AutoMapper;
+using Microsoft.Owin.Security.Provider;
+using Stocky.Dtos;
 using Stocky.Models;
 
 namespace Stocky.Controllers.API
@@ -16,40 +20,41 @@ namespace Stocky.Controllers.API
         }
 
 
-        public IEnumerable<Product> GetProducts()
+        public IEnumerable<ProductDto> GetProducts()
         {
             _context.Configuration.ProxyCreationEnabled = false;
-            return _context.Products.ToList();
+            return _context.Products.ToList().Select(Mapper.Map<Product, ProductDto>);
         }
 
-        public Product GetProduct(int id)
+        public IHttpActionResult GetProduct(int id)
         {
             var product = _context.Products.SingleOrDefault(p => p.Id == id);
 
             if (product == null)
             {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+                return NotFound();
             }
 
-            return product;
+            return Ok(Mapper.Map<Product, ProductDto>(product));
         }
 
         [HttpPost]
-        public Product CreateProduct(Product product)
+        public IHttpActionResult CreateProduct(ProductDto productDto)
         {
             if (!ModelState.IsValid)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
 
+            var product = Mapper.Map<ProductDto, Product>(productDto);
             _context.Products.Add(product);
             _context.SaveChanges();
 
-            return product;
+            return Created(new Uri(Request.RequestUri + "/" + product.Id), product);
         }
 
         [HttpPut]
-        public void UpdateCustomer(int id, Product product)
+        public void UpdateCustomer(int id, ProductDto productDto)
         {
             if (!ModelState.IsValid)
             {
@@ -63,11 +68,7 @@ namespace Stocky.Controllers.API
                 throw  new HttpResponseException(HttpStatusCode.NotFound);
             }
 
-            productInDb.Name = product.Name;
-            productInDb.Description = product.Description;
-            productInDb.Sku = product.Sku;
-            productInDb.Price = product.Price;
-            productInDb.Categories = product.Categories;
+            Mapper.Map(productDto, productInDb);
 
             _context.SaveChanges();
         }
