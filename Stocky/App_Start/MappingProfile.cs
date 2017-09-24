@@ -14,6 +14,8 @@ namespace Stocky.App_Start
         {
             Mapper.CreateMap<Product, ProductDto>();
             Mapper.CreateMap<ProductDto, Product>();
+            Mapper.CreateMap<Category, CategoryDto>();
+
         }
     }
 }

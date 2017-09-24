@@ -24,7 +24,9 @@ namespace Stocky.Controllers.API
         public IEnumerable<ProductDto> GetProducts()
         {
             _context.Configuration.ProxyCreationEnabled = false;
-            return _context.Products.ToList().Select(Mapper.Map<Product, ProductDto>);
+            var products = _context.Products.Include(p => p.Categories).ToList(); //.Select(Mapper.Map<Product, ProductDto>);
+            var productsDto =  products.Select(Mapper.Map<Product, ProductDto>);
+            return productsDto;
         }
 
         public IHttpActionResult GetProduct(int id)

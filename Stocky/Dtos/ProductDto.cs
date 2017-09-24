@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Stocky.Models;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
@@ -25,6 +27,8 @@ namespace Stocky.Dtos
 
         [Required]
         public double Price { get; set; }
+
+        public Collection <CategoryDto> Categories { get; set; }
 
     }
 }

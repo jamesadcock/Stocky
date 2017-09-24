@@ -27,7 +27,7 @@ namespace Stocky.Models
         [Required]
         public double Price { get; set; }
 
-        public virtual Collection < Category> Categories { get; set; }
+        public virtual Collection <Category> Categories { get; set; }
 
         public List<int> CategoryIds { get; set; }
     }
