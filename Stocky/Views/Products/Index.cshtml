@@ -1,5 +1,4 @@
-﻿@model IEnumerable<Stocky.Models.Product>
-@{
+﻿@{
     ViewBag.Title = "Products";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -9,73 +8,77 @@
     @Html.ActionLink("Add Product", "New", "Products", null, new { @class = "btn btn-primary" })
 </p>
 
-@if (!Model.Any())
-{
-    <text> No Produtcs have been created </text>
-}
-else
-{
-    <table id ="products" class="table table-striped table-bordered">
-        <thead>
+
+<table id="products" class="table table-striped table-bordered">
+    <thead>
         <tr>
             <th>Product Name</th>
             <th>Sku</th>
             <th>Product Description</th>
             <th>Price</th>
+            @*
             <th>Categories</th>
+            *@
             <th>Actions</th>
 
         </tr>
-        </thead>
-        <tbody>
-        @foreach (var product in Model)
-        {
-            <tr>
-                <td>@product.Name</td>
-                <td>@product.Sku</td>
-                <td>@product.Description</td>
-                <td>@product.Price</td>
-                <td>
-                    @foreach (var category in product.Categories)
-                    {
-                        @category.Name;
-                        <text>  </text>
-                            
-                    } 
-                  
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", "Products", new { id = product.Id }, null)
-                    <button data-product-id="@product.Id" class="btn-link js-delete">Delete</button>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
+    </thead>
+
+    <tbody>
+
+    </tbody>
+</table>
+
 @section scripts
 {
     <script>
-        $(document).ready(function() {
-            $("#products").on("click", ".js-delete", function() {
+        $(document).ready(function () {
+            var table = $("#products").DataTable({
+                ajax: {
+                    url: "/api/products",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name"
+                    },
+                    {
+                        data: "sku"
+                    },
+                    {
+                        data: "description",
+                    },
+                    {
+                        data: "price",
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<button class='btn btn-link js-delete' data-product-id=" + data + ">Delete</button> <a class='btn btn-link' href='/Products/Edit?id=" + data + "'>Edit</a>";
+                        }
+                     }
+                ]
+            });
+
+
+            $("#products").on("click", ".js-delete", function () {
                 var button = $(this);
 
-                bootbox.confirm("Please confirm you wish to delete the product", function(result) {
+                bootbox.confirm("Are you sure you want to delete this product?", function (result) {
                     if (result) {
                         $.ajax({
-                            url: "api/products/" + button.attr("data-product-id"),
+                            url: "/api/products/" + button.attr("data-product-id"),
                             method: "DELETE",
-                            success: function() {
-                                button.parents("tr").remove();
+                            success: function () {
+                                table.row(button.parents("tr")).remove().draw();
                             }
                         });
                     }
-                }); 
+                });
+            });
         });
-
-    });
     </script>
+}
     
 
-}
 

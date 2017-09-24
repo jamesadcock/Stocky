@@ -79,9 +79,7 @@ namespace Stocky.Controllers
 
         public ViewResult Index()
         {
-            var products = _context.Products.Include(p => p.Categories).ToList();
-
-            return View(products);
+            return View();
         }
 
 

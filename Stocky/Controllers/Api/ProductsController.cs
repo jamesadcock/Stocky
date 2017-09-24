@@ -5,6 +5,7 @@ using System.Net;
 using System.Web.Http;
 using AutoMapper;
 using Microsoft.Owin.Security.Provider;
+using System.Data.Entity;
 using Stocky.Dtos;
 using Stocky.Models;
 
