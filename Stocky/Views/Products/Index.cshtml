@@ -8,10 +8,11 @@
     @Html.ActionLink("Add Product", "New", "Products", null, new { @class = "btn btn-primary" })
 </p>
 
-<select id="category-list">
-    <option value="Consoles">Consoles</option>
-    <option value="Games">Games</option>
-</select>
+
+
+<div class="form-group">
+    <select id="category-list" class="form-control"></select>
+</div>
 
 
 <table id="products" class="table table-striped table-bordered">
@@ -36,10 +37,31 @@
 {
     <script>
         $(document).ready(function () {
+            var defaultCategory = "";
+            $.ajax({
+                url: "/api/categories",
+                dataType: "json",
+                async: false,
+                success: function (json) {
+                    $.each(json, function (i, value) {
+                        $('#category-list').append($('<option>').text(value.name).attr('value', value.name));
+                    });
+                    defaultCategory = json[0].name;
+                    console.log("1:" + defaultCategory);
+
+                    
+                    
+                }
+            });
+
+            console.log("2:" + defaultCategory);
+
+
             var table = $("#products").DataTable({
                 ajax: {
-                    url: "/api/products?category=Consoles",
-                    dataSrc: ""
+                    url: "/api/products?category=" + defaultCategory,
+                    dataSrc: "",
+                    async: false
                 },
                 columns: [
                     {
