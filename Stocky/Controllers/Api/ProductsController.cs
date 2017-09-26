@@ -21,10 +21,11 @@ namespace Stocky.Controllers.API
         }
 
 
-        public IEnumerable<ProductDto> GetProducts()
+        public IEnumerable<ProductDto> GetProducts(string category)
         {
             _context.Configuration.ProxyCreationEnabled = false;
-            var products = _context.Products.Include(p => p.Categories).ToList(); //.Select(Mapper.Map<Product, ProductDto>);
+            // var products = _context.Products.Include(p => p.Categories).ToList();
+            var products = _context.Products.Include(p => p.Categories).Where(p => p.Categories.Any(c => c.Name == category)).ToList();
             var productsDto =  products.Select(Mapper.Map<Product, ProductDto>);
             return productsDto;
         }

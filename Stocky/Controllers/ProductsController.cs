@@ -106,6 +106,11 @@ namespace Stocky.Controllers
 
         }
 
+        public ActionResult All()
+        {
+            return View();
+        }
+
         
         public Collection<Category> ParseProductCategories(Product product)
         {
