@@ -25,7 +25,7 @@ namespace Stocky.Models
         public string Description { get; set; }
 
         [Required]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         public virtual Collection <Category> Categories { get; set; }
 

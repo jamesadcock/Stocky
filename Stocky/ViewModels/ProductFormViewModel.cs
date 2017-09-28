@@ -28,7 +28,7 @@ namespace Stocky.ViewModels
         public string Description { get; set; }
 
         [Required]
-        public double? Price { get; set; }
+        public decimal? Price { get; set; }
 
         // public Category Category { get; set; }
         [Display(Name = "Category")]
