@@ -5,7 +5,7 @@
 
 <h1>@ViewBag.Title</h1>
 <p>
-    @Html.ActionLink("Add Product", "New", "Products", null, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Add Product", "New", "Products", null, new { @class = "btn btn-primary pull-right" })
 </p>
 
 
@@ -46,18 +46,13 @@
                     $.each(json, function (i, value) {
                         $('#category-list').append($('<option>').text(value.name).attr('value', value.name));
                     });
-                    defaultCategory = json[0].name;
-                    console.log("1:" + defaultCategory);
-
-                    
+                    defaultCategory = json[0].name;                    
                     
                 }
             });
 
-            console.log("2:" + defaultCategory);
-
-
             var table = $("#products").DataTable({
+                "dom": '<"top"f>rt<"bottom"ip><"clear">',
                 ajax: {
                     url: "/api/products?category=" + defaultCategory,
                     dataSrc: "",

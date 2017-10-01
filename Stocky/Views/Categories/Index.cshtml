@@ -7,7 +7,7 @@
 <h1>@ViewBag.Title</h1>
 
 <p>
-    @Html.ActionLink("Add Category", "New", "Categories", null, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Add Category", "New", "Categories", null, new { @class = "btn btn-primary pull-right" })
 </p>
 
 @if (!Model.Any())
@@ -35,6 +35,7 @@ else
     <script>
         $(document).ready(function () {
             var table = $("#categories").DataTable({
+                "dom": '<"top"f>rt<"bottom"ip><"clear">',
                 ajax: {
                     url: "/api/categories",
                     dataSrc: "",
