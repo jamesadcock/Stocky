@@ -8,6 +8,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using AutoMapper;
 using Stocky.App_Start;
+using Newtonsoft.Json;
 
 namespace Stocky
 {
@@ -21,6 +22,7 @@ namespace Stocky
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.Re‌​ferenceLoopHandling = ReferenceLoopHandling.Ignore;
         }
     }
 }

@@ -5,7 +5,10 @@ using System.Linq;
 using System.Web.Mvc;
 using Stocky.Models;
 using Stocky.ViewModels;
-
+using System.Net.Http;
+using System;
+using AutoMapper;
+using Stocky.Dtos;
 
 namespace Stocky.Controllers
 {
@@ -56,8 +59,27 @@ namespace Stocky.Controllers
             if (product.Id == 0)
             {
 
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost:49640/api/");
+
+                    product.Categories = ParseProductCategories(product);
+                    var productDto = Mapper.Map<Product, ProductDto>(product);
+
+                    var postTask = client.PostAsJsonAsync<ProductDto>("products", productDto);
+                    postTask.Wait();
+
+                    var result = postTask.Result;
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                }
+
+
                 product.Categories = ParseProductCategories(product);
-                _context.Products.Add(product);
+                //  _context.Products.Add(product);
             }
             // edit an existing product 
             else
@@ -105,13 +127,8 @@ namespace Stocky.Controllers
             return View("ProductForm", viewModel);
 
         }
-
-        public ActionResult All()
-        {
-            return View();
-        }
-
         
+
         public Collection<Category> ParseProductCategories(Product product)
         {
             Collection<Category> categories = new Collection<Category>();

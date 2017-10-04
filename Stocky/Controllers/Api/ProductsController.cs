@@ -42,8 +42,8 @@ namespace Stocky.Controllers.API
             return Ok(Mapper.Map<Product, ProductDto>(product));
         }
 
-        [HttpPost]
-        public IHttpActionResult CreateProduct(ProductDto productDto)
+
+        public IHttpActionResult PostNewProduct(ProductDto productDto)
         {
             if (!ModelState.IsValid)
             {
@@ -54,7 +54,8 @@ namespace Stocky.Controllers.API
             _context.Products.Add(product);
             _context.SaveChanges();
 
-            return Created(new Uri(Request.RequestUri + "/" + product.Id), product);
+            productDto.Id = product.Id;
+            return Created(new Uri(Request.RequestUri + "/" + product.Id), productDto);
         }
 
         [HttpPut]
