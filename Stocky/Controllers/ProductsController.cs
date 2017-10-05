@@ -9,6 +9,7 @@ using System.Net.Http;
 using System;
 using AutoMapper;
 using Stocky.Dtos;
+using System.Web;
 
 namespace Stocky.Controllers
 {
@@ -53,49 +54,40 @@ namespace Stocky.Controllers
                     Categories = _context.Categories.ToList()
 
                 };
-                    return View("ProductForm", viewModel);
+                return View("ProductForm", viewModel);
             }
-            // create a new product
-            if (product.Id == 0)
+
+            using (var client = new HttpClient())
             {
+                client.BaseAddress = new Uri("http://localhost:49640/api/");
+                product.Categories = ParseProductCategories(product);
+                var productDto = Mapper.Map<Product, ProductDto>(product);
+                HttpResponseMessage result;
 
-                using (var client = new HttpClient())
+                // create a new product
+                if (product.Id == 0)
                 {
-                    client.BaseAddress = new Uri("http://localhost:49640/api/");
-
-                    product.Categories = ParseProductCategories(product);
-                    var productDto = Mapper.Map<Product, ProductDto>(product);
-
                     var postTask = client.PostAsJsonAsync<ProductDto>("products", productDto);
                     postTask.Wait();
-
-                    var result = postTask.Result;
-
-                    if (result.IsSuccessStatusCode)
-                    {
-                        return RedirectToAction("Index");
-                    }
+                    result = postTask.Result;
+                }
+                else //edit an existing product
+                {
+                    var putTask = client.PutAsJsonAsync<ProductDto>("products/" + product.Id, productDto);
+                    putTask.Wait();
+                    result = putTask.Result;
                 }
 
-
-                product.Categories = ParseProductCategories(product);
-                //  _context.Products.Add(product);
+                if (result.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    throw new HttpException(500, result.ToString());
+                }
             }
-            // edit an existing product 
-            else
-            {
-                var productInDb = _context.Products.Include(p => p.Categories).Single(p => p.Id == product.Id);
-               
-                productInDb.Name = product.Name;
-                productInDb.Sku = product.Sku;
-                productInDb.Description = product.Description;
-                productInDb.Price = product.Price;
-                productInDb.Categories = ParseProductCategories(product);
-
-            }
-            _context.SaveChanges();
-
-            return RedirectToAction("Index", "Products");
+   
         }
 
 
@@ -103,7 +95,6 @@ namespace Stocky.Controllers
         {
             return View();
         }
-
 
         public ActionResult Edit(int id)
         {
