@@ -44,7 +44,7 @@ namespace Stocky.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Save(Product product)
+        public ActionResult Save(Product product, List<int> categoryIds)
         {
             // form validation
             if (!ModelState.IsValid)
@@ -60,7 +60,7 @@ namespace Stocky.Controllers
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:49640/api/");
-                product.Categories = ParseProductCategories(product);
+                product.Categories = ParseProductCategories(categoryIds);
                 var productDto = Mapper.Map<Product, ProductDto>(product);
                 HttpResponseMessage result;
 
@@ -120,10 +120,10 @@ namespace Stocky.Controllers
         }
         
 
-        public Collection<Category> ParseProductCategories(Product product)
+        public Collection<Category> ParseProductCategories(List<int> categoryIds)
         {
             Collection<Category> categories = new Collection<Category>();
-            foreach (var categoryId in product.CategoryIds)
+            foreach (var categoryId in categoryIds)
             {
                 var category = _context.Categories.Single(c => c.Id == categoryId);
                 categories.Add(category);

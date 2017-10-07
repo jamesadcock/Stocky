@@ -28,7 +28,5 @@ namespace Stocky.Models
         public decimal Price { get; set; }
 
         public virtual Collection <Category> Categories { get; set; }
-
-        public List<int> CategoryIds { get; set; }
     }
 }

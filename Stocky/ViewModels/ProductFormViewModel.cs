@@ -53,7 +53,6 @@ namespace Stocky.ViewModels
             Sku = product.Sku;
             Description = product.Description;
             Price = product.Price;
-            CategoryIds= product.CategoryIds;
 
         }
     }

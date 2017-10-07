@@ -8,6 +8,7 @@ using Microsoft.Owin.Security.Provider;
 using System.Data.Entity;
 using Stocky.Dtos;
 using Stocky.Models;
+using System.Collections.ObjectModel;
 
 namespace Stocky.Controllers.API
 {
@@ -24,7 +25,6 @@ namespace Stocky.Controllers.API
         public IEnumerable<ProductDto> GetProducts(string category)
         {
             _context.Configuration.ProxyCreationEnabled = false;
-            // var products = _context.Products.Include(p => p.Categories).ToList();
             var products = _context.Products.Include(p => p.Categories).Where(p => p.Categories.Any(c => c.Name == category)).ToList();
             var productsDto =  products.Select(Mapper.Map<Product, ProductDto>);
             return productsDto;
@@ -42,7 +42,7 @@ namespace Stocky.Controllers.API
             return Ok(Mapper.Map<Product, ProductDto>(product));
         }
 
-
+        [HttpPost]
         public IHttpActionResult PostNewProduct(ProductDto productDto)
         {
             if (!ModelState.IsValid)
@@ -51,6 +51,15 @@ namespace Stocky.Controllers.API
             }
 
             var product = Mapper.Map<ProductDto, Product>(productDto);
+            product.Categories = new Collection<Category>();
+
+            // attach categroies to dbcontext
+            foreach (var categoryDto in productDto.Categories)
+            {
+                var category = _context.Categories.Single(c => c.Id == categoryDto.Id);
+                product.Categories.Add(category);
+            }
+
             _context.Products.Add(product);
             _context.SaveChanges();
 
@@ -72,8 +81,17 @@ namespace Stocky.Controllers.API
             {
                 throw  new HttpResponseException(HttpStatusCode.NotFound);
             }
-
+  
             Mapper.Map(productDto, productInDb);
+
+            productInDb.Categories = new Collection<Category>();
+
+            // attach categroies to dbcontext
+            foreach (var categoryDto in productDto.Categories)
+            {
+                var category = _context.Categories.Single(c => c.Id == categoryDto.Id);
+                productInDb.Categories.Add(category);
+            }
 
             _context.SaveChanges();
         }
