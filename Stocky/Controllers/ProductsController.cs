@@ -44,7 +44,6 @@ namespace Stocky.Controllers
             var viewModel = new ProductFormViewModel()
             {
                 Categories = categories
-   
             };
             return View("ProductForm", viewModel);
         }
@@ -71,7 +70,6 @@ namespace Stocky.Controllers
             }
 
             return View("ProductForm", viewModel);
-
         }
 
 
