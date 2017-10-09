@@ -44,7 +44,7 @@ namespace Stocky.Controllers.Api
 
         // create a new category
         [HttpPost]
-        public IHttpActionResult CreateProduct(CategoryDto categoryDto)
+        public IHttpActionResult CreateCategory(CategoryDto categoryDto)
         {
             if (!ModelState.IsValid)
             {
@@ -61,7 +61,7 @@ namespace Stocky.Controllers.Api
 
         // edit and exisiting category
         [HttpPut]
-        public void UpdateCustomer(int id, CategoryDto categoryDto)
+        public void UpdateCategory(int id, CategoryDto categoryDto)
         {
             if (!ModelState.IsValid)
             {

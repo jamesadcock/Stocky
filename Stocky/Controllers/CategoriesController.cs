@@ -1,41 +1,23 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Stocky.Models;
-using Stocky.ViewModels;
 using AutoMapper;
 using System.Net.Http;
 using Stocky.Dtos;
 using Newtonsoft.Json;
+using System.Configuration;
 
 namespace Stocky.Controllers
 {
     public class CategoriesController : Controller
     {
-        private ApplicationDbContext _context;
-
-
-        public CategoriesController()
-        {
-            _context = new ApplicationDbContext();
-        }
-
-
-        protected override void Dispose(bool disposing)
-        {
-            _context.Dispose();
-        }
+        private readonly string apiUri = ConfigurationManager.AppSettings["ApiUri"].ToString();
 
 
         // render view for category list
         public ViewResult Index()
         {
-            var categories = _context.Categories.ToList();
-
-            return View(categories);
+            return View();
         }
 
 
@@ -50,11 +32,10 @@ namespace Stocky.Controllers
         // render edit category form
         public ActionResult Edit(int id)
         {
-
             using (var client = new HttpClient())
             {
                 // get the categories from the API
-                HttpResponseMessage response = client.GetAsync("http://localhost:49640/api/categories/" + id).Result;
+                HttpResponseMessage response = client.GetAsync(apiUri + "categories/" + id).Result;
                 String content = response.Content.ReadAsStringAsync().Result;
 
                 if (response.IsSuccessStatusCode)
@@ -82,31 +63,29 @@ namespace Stocky.Controllers
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:49640/api/");
                 var categoryDto = Mapper.Map<Category, CategoryDto>(category);
-                HttpResponseMessage result;
+
+                client.BaseAddress = new Uri(apiUri);
+                HttpResponseMessage response;
 
                 // create a new category
                 if (category.Id == 0)
                 {
-                    var postTask = client.PostAsJsonAsync<CategoryDto>("categories", categoryDto);
-                    postTask.Wait();
-                    result = postTask.Result;
+                    response = client.PostAsJsonAsync<CategoryDto>("categories", categoryDto).Result;
                 }
                 else //edit an existing category
                 {
-                    var putTask = client.PutAsJsonAsync<CategoryDto>("categories/" + category.Id, categoryDto);
-                    putTask.Wait();
-                    result = putTask.Result;
+                    response = client.PutAsJsonAsync<CategoryDto>("categories/" + category.Id, categoryDto).Result;
                 }
 
-                if (result.IsSuccessStatusCode)
+                // redirect to list of categories if successful
+                if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    throw new HttpException(500, result.ToString());
+                    return new HttpStatusCodeResult((int)response.StatusCode);
                 }
             }     
         }
