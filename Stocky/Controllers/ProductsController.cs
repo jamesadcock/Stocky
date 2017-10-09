@@ -10,12 +10,15 @@ using System;
 using AutoMapper;
 using Stocky.Dtos;
 using System.Web;
+using System.Configuration;
+using Newtonsoft.Json;
 
 namespace Stocky.Controllers
 {
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly string apiUri = ConfigurationManager.AppSettings["ApiUri"].ToString();
 
 
         public ProductsController()
@@ -40,7 +43,25 @@ namespace Stocky.Controllers
         // renders new products form
         public ActionResult New()
         {
-            var categories = _context.Categories.ToList();
+            Collection<Category> categories;
+
+            using (var client = new HttpClient())
+            {
+                // get the categories from the API
+                HttpResponseMessage response = client.GetAsync(apiUri + "categories").Result;
+                String content = response.Content.ReadAsStringAsync().Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    categories = JsonConvert.DeserializeObject<Collection<Category>>(content);
+                }
+                else
+                {
+                    throw new HttpException();
+                }
+            }
+
+
             var viewModel = new ProductFormViewModel()
             {
                 Categories = categories
