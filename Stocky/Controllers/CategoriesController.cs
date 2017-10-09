@@ -9,6 +9,7 @@ using Stocky.ViewModels;
 using AutoMapper;
 using System.Net.Http;
 using Stocky.Dtos;
+using Newtonsoft.Json;
 
 namespace Stocky.Controllers
 {
@@ -38,12 +39,10 @@ namespace Stocky.Controllers
         }
 
 
-        // render new categroy form
+        // render new category form
         public ActionResult New()
         {
-            var categories = _context.Categories.ToList();
             var category = new Category();
-  
             return View("CategoryForm", category);
         }
 
@@ -51,12 +50,23 @@ namespace Stocky.Controllers
         // render edit category form
         public ActionResult Edit(int id)
         {
-            var category = _context.Categories.SingleOrDefault(c => c.Id == id);
 
-            if (category == null)
-                return HttpNotFound();
+            using (var client = new HttpClient())
+            {
+                // get the categories from the API
+                HttpResponseMessage response = client.GetAsync("http://localhost:49640/api/categories/" + id).Result;
+                String content = response.Content.ReadAsStringAsync().Result;
 
-            return View("CategoryForm", category);
+                if (response.IsSuccessStatusCode)
+                {
+                    Category category = JsonConvert.DeserializeObject<Category>(content);
+                    return View("CategoryForm", category);
+                }
+                else
+                {
+                    return new HttpStatusCodeResult((int)response.StatusCode);
+                }
+            }
         }
 
 

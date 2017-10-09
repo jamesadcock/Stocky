@@ -20,12 +20,15 @@ namespace Stocky.Controllers.Api
         }
 
 
+        // get all categroies
         public IEnumerable<CategoryDto> GetCategories()
         {
             var categoriesDto = _context.Categories.ToList().Select(Mapper.Map<Category, CategoryDto>);
             return categoriesDto;
         }
 
+
+        // get specified category
         public IHttpActionResult GetCategory(int id)
         {
             var category = _context.Categories.SingleOrDefault(p => p.Id == id);
@@ -35,9 +38,11 @@ namespace Stocky.Controllers.Api
                 return NotFound();
             }
 
-            return Ok(Mapper.Map<Category, ProductDto>(category));
+            return Ok(Mapper.Map<Category, CategoryDto>(category));
         }
 
+
+        // create a new category
         [HttpPost]
         public IHttpActionResult CreateProduct(CategoryDto categoryDto)
         {
@@ -53,6 +58,8 @@ namespace Stocky.Controllers.Api
             return Created(new Uri(Request.RequestUri + "/" + category.Id), category);
         }
 
+
+        // edit and exisiting category
         [HttpPut]
         public void UpdateCustomer(int id, CategoryDto categoryDto)
         {
@@ -72,6 +79,7 @@ namespace Stocky.Controllers.Api
 
             _context.SaveChanges();
         }
+
 
         [HttpDelete]
         public void DeleteCategory(int id)
