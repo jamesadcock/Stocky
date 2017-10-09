@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Web.Http;
 using AutoMapper;
-using Microsoft.Owin.Security.Provider;
 using System.Data.Entity;
 using Stocky.Dtos;
 using Stocky.Models;
@@ -22,6 +21,7 @@ namespace Stocky.Controllers.API
         }
 
 
+        // returns all products in a category
         public IEnumerable<ProductDto> GetProducts(string category)
         {
             _context.Configuration.ProxyCreationEnabled = false;
@@ -30,6 +30,7 @@ namespace Stocky.Controllers.API
             return productsDto;
         }
 
+        // returns specified product
         public IHttpActionResult GetProduct(int id)
         {
             var product = _context.Products.SingleOrDefault(p => p.Id == id);
@@ -42,6 +43,8 @@ namespace Stocky.Controllers.API
             return Ok(Mapper.Map<Product, ProductDto>(product));
         }
 
+
+        // adds a new product
         [HttpPost]
         public IHttpActionResult PostNewProduct(ProductDto productDto)
         {
@@ -67,8 +70,10 @@ namespace Stocky.Controllers.API
             return Created(new Uri(Request.RequestUri + "/" + product.Id), productDto);
         }
 
+
+        // edit an existing produt
         [HttpPut]
-        public void UpdateCustomer(int id, ProductDto productDto)
+        public void UpdateProduct(int id, ProductDto productDto)
         {
             if (!ModelState.IsValid)
             {

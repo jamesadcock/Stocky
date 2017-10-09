@@ -30,6 +30,14 @@ namespace Stocky.Controllers
         }
 
 
+        // renders all products view
+        public ViewResult Index()
+        {
+            return View();
+        }
+
+
+        // renders new products form
         public ActionResult New()
         {
             var categories = _context.Categories.ToList();
@@ -42,6 +50,32 @@ namespace Stocky.Controllers
         }
 
 
+        // renders edit product form
+        public ActionResult Edit(int id)
+        {
+            var product = _context.Products.Include(p => p.Categories).SingleOrDefault(p => p.Id == id);
+
+            if (product == null)
+                return HttpNotFound();
+
+            var viewModel = new ProductFormViewModel(product)
+            {
+                Categories = _context.Categories.ToList()
+
+            };
+
+            viewModel.CategoryIds = new List<int>();
+            foreach (var category in product.Categories)
+            {
+                viewModel.CategoryIds.Add(category.Id);
+            }
+
+            return View("ProductForm", viewModel);
+
+        }
+
+
+        // forwards new product data or edited product data to API
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Save(Product product, List<int> categoryIds)
@@ -91,35 +125,7 @@ namespace Stocky.Controllers
         }
 
 
-        public ViewResult Index()
-        {
-            return View();
-        }
-
-        public ActionResult Edit(int id)
-        {
-            var product = _context.Products.Include(p => p.Categories).SingleOrDefault(p => p.Id == id); 
-
-            if (product == null)
-                return HttpNotFound();
-
-            var viewModel = new ProductFormViewModel(product)
-            {
-                Categories = _context.Categories.ToList()
-                
-            };
-
-            viewModel.CategoryIds= new List<int>();
-            foreach (var category in product.Categories)
-            {
-                viewModel.CategoryIds.Add(category.Id);
-            }
-
-            return View("ProductForm", viewModel);
-
-        }
-        
-
+        // transforms Category Id's to category objects
         public Collection<Category> ParseProductCategories(List<int> categoryIds)
         {
             Collection<Category> categories = new Collection<Category>();
@@ -130,7 +136,6 @@ namespace Stocky.Controllers
             }
 
             return categories;
-
         } 
     }
 
