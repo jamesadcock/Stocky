@@ -29,6 +29,7 @@
 {
     <script>
         $(document).ready(function () {
+            // render categories table
             var table = $("#categories").DataTable({
                 "dom": '<"top"f>rt<"bottom"ip><"clear">',
                 ajax: {
@@ -49,7 +50,7 @@
                 ]
             });
 
-
+            // delete category
             $("#categories").on("click", ".js-delete", function () {
                 var button = $(this);
 

@@ -37,6 +37,7 @@
 {
     <script>
         $(document).ready(function () {
+            // get list of categories
             var defaultCategory = "";
             $.ajax({
                 url: "/api/categories",
@@ -51,6 +52,7 @@
                 }
             });
 
+            // render products table
             var table = $("#products").DataTable({
                 "dom": '<"top"f>rt<"bottom"ip><"clear">',
                 ajax: {
@@ -71,8 +73,6 @@
                     {
                         data: "price",
                         render: $.fn.dataTable.render.number(',', '.', 2, '£')
-         
-
                     },
                     {
                         data: "categories[, ].name",
@@ -86,13 +86,13 @@
                 ]
             });
 
-
+            // rebind table when new category selected
             $('#category-list').on('change', function () {
                 category = $("#category-list").val();
                 table.ajax.url('/api/products?category=' + category).load()
             });
 
-
+            // delete product
             $("#products").on("click", ".js-delete", function () {
                 var button = $(this);
 
