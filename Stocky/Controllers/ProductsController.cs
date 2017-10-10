@@ -34,15 +34,15 @@ namespace Stocky.Controllers
             {
                 // get the categories from the API
                 HttpResponseMessage response = client.GetAsync(apiUri + "categories").Result;
-                String content = response.Content.ReadAsStringAsync().Result;
-
+               
                 if (response.IsSuccessStatusCode)
                 {
+                    String content = response.Content.ReadAsStringAsync().Result;
                     categories = JsonConvert.DeserializeObject<Collection<Category>>(content);
                 }
                 else
                 {
-                    throw new HttpException();
+                    throw new HttpException(500, response.ReasonPhrase);
                 }
             }
 
@@ -62,11 +62,11 @@ namespace Stocky.Controllers
             {
                 // get product with specifed id
                 HttpResponseMessage getProductResponse = client.GetAsync(apiUri + "products/" + id).Result;
-                String productContent = getProductResponse.Content.ReadAsStringAsync().Result;
 
                 if (getProductResponse.IsSuccessStatusCode)
                 {
-                    product = JsonConvert.DeserializeObject<Product>(productContent);
+                    String content = getProductResponse.Content.ReadAsStringAsync().Result;
+                    product = JsonConvert.DeserializeObject<Product>(content);
                 }
                 else
                 {
@@ -74,11 +74,13 @@ namespace Stocky.Controllers
                 }
             }
 
+            // get full list of products
             var viewModel = new ProductFormViewModel(product)
             {
                 Categories = getCategories()
             };
 
+            // list of categry id for multi-select
             viewModel.CategoryIds = new List<int>();
 
             foreach (var category in product.Categories)
@@ -108,32 +110,30 @@ namespace Stocky.Controllers
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(apiUri);
                 product.Categories = ParseProductCategories(categoryIds);
                 var productDto = Mapper.Map<Product, ProductDto>(product);
-                HttpResponseMessage result;
+
+                client.BaseAddress = new Uri(apiUri);
+                HttpResponseMessage response;
 
                 // create a new product
                 if (product.Id == 0)
                 {
-                    var postTask = client.PostAsJsonAsync<ProductDto>("products", productDto);
-                    postTask.Wait();
-                    result = postTask.Result;
+                    response = client.PostAsJsonAsync<ProductDto>("products", productDto).Result;
                 }
                 else //edit an existing product
                 {
-                    var putTask = client.PutAsJsonAsync<ProductDto>("products/" + product.Id, productDto);
-                    putTask.Wait();
-                    result = putTask.Result;
+                    response = client.PutAsJsonAsync<ProductDto>("products/" + product.Id, productDto).Result;
                 }
 
-                if (result.IsSuccessStatusCode)
+
+                if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    throw new HttpException(500, result.ToString());
+                    throw new HttpException(500, response.ReasonPhrase);
                 }
             } 
         }
@@ -161,17 +161,17 @@ namespace Stocky.Controllers
             {
                 List<Category> categories;
                 // get categroies for category list
-                HttpResponseMessage getCategoryResponse = client.GetAsync(apiUri + "categories").Result;
-                String categoryContent = getCategoryResponse.Content.ReadAsStringAsync().Result;
+                HttpResponseMessage response = client.GetAsync(apiUri + "categories").Result;
 
-                if (getCategoryResponse.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
-                    categories = JsonConvert.DeserializeObject<List<Category>>(categoryContent);
+                    String content = response.Content.ReadAsStringAsync().Result;
+                    categories = JsonConvert.DeserializeObject<List<Category>>(content);
                     return categories;
                 }
                 else
                 {
-                    throw new HttpException();
+                    throw new HttpException(500, response.ReasonPhrase);
                 }
             }
         }

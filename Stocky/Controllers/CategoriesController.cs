@@ -6,6 +6,7 @@ using System.Net.Http;
 using Stocky.Dtos;
 using Newtonsoft.Json;
 using System.Configuration;
+using System.Web;
 
 namespace Stocky.Controllers
 {
@@ -45,7 +46,7 @@ namespace Stocky.Controllers
                 }
                 else
                 {
-                    return new HttpStatusCodeResult((int)response.StatusCode);
+                    throw new HttpException(500, response.ReasonPhrase);
                 }
             }
         }
@@ -85,7 +86,7 @@ namespace Stocky.Controllers
                 }
                 else
                 {
-                    return new HttpStatusCodeResult((int)response.StatusCode);
+                    throw new HttpException(500, response.ReasonPhrase);
                 }
             }     
         }
