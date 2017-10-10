@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Linq;
 using System.Web.Mvc;
 using Stocky.Models;
 using Stocky.ViewModels;
@@ -17,20 +15,7 @@ namespace Stocky.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly string apiUri = ConfigurationManager.AppSettings["ApiUri"].ToString();
-
-
-        public ProductsController()
-        {
-            _context = new ApplicationDbContext();
-        }
-
-
-        protected override void Dispose(bool disposing)
-        {
-            _context.Dispose(); 
-        }
 
 
         // renders all products view
@@ -61,7 +46,6 @@ namespace Stocky.Controllers
                 }
             }
 
-
             var viewModel = new ProductFormViewModel()
             {
                 Categories = categories
@@ -73,18 +57,30 @@ namespace Stocky.Controllers
         // renders edit product form
         public ActionResult Edit(int id)
         {
-            var product = _context.Products.Include(p => p.Categories).SingleOrDefault(p => p.Id == id);
+            Product product;
+            using (var client = new HttpClient())
+            {
+                // get product with specifed id
+                HttpResponseMessage getProductResponse = client.GetAsync(apiUri + "products/" + id).Result;
+                String productContent = getProductResponse.Content.ReadAsStringAsync().Result;
 
-            if (product == null)
-                return HttpNotFound();
+                if (getProductResponse.IsSuccessStatusCode)
+                {
+                    product = JsonConvert.DeserializeObject<Product>(productContent);
+                }
+                else
+                {
+                    return HttpNotFound();
+                }
+            }
 
             var viewModel = new ProductFormViewModel(product)
             {
-                Categories = _context.Categories.ToList()
-
+                Categories = getCategories()
             };
 
             viewModel.CategoryIds = new List<int>();
+
             foreach (var category in product.Categories)
             {
                 viewModel.CategoryIds.Add(category.Id);
@@ -104,7 +100,7 @@ namespace Stocky.Controllers
             {
                 var viewModel = new ProductFormViewModel(product)
                 {
-                    Categories = _context.Categories.ToList()
+                    Categories = getCategories()
 
                 };
                 return View("ProductForm", viewModel);
@@ -112,7 +108,7 @@ namespace Stocky.Controllers
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:49640/api/");
+                client.BaseAddress = new Uri(apiUri);
                 product.Categories = ParseProductCategories(categoryIds);
                 var productDto = Mapper.Map<Product, ProductDto>(product);
                 HttpResponseMessage result;
@@ -139,24 +135,45 @@ namespace Stocky.Controllers
                 {
                     throw new HttpException(500, result.ToString());
                 }
-            }
-   
+            } 
         }
 
 
-        // transforms Category Id's to category objects
+        // transforms list category Id's to list of category objects
         public Collection<Category> ParseProductCategories(List<int> categoryIds)
         {
             Collection<Category> categories = new Collection<Category>();
             foreach (var categoryId in categoryIds)
             {
-                var category = _context.Categories.Single(c => c.Id == categoryId);
-                categories.Add(category);
+               foreach(Category category in getCategories())
+                {
+                    if (category.Id == categoryId)
+                        categories.Add(category);
+                }
             }
-
             return categories;
         } 
+
+
+        public List<Category> getCategories()
+        {
+            using (var client = new HttpClient())
+            {
+                List<Category> categories;
+                // get categroies for category list
+                HttpResponseMessage getCategoryResponse = client.GetAsync(apiUri + "categories").Result;
+                String categoryContent = getCategoryResponse.Content.ReadAsStringAsync().Result;
+
+                if (getCategoryResponse.IsSuccessStatusCode)
+                {
+                    categories = JsonConvert.DeserializeObject<List<Category>>(categoryContent);
+                    return categories;
+                }
+                else
+                {
+                    throw new HttpException();
+                }
+            }
+        }
     }
-
-
 }
