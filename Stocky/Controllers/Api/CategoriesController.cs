@@ -12,18 +12,18 @@ namespace Stocky.Controllers.Api
 {
     public class CategoriesController : ApiController
     {
-        private ApplicationDbContext _context;
+        private ApplicationDbContext dBcontext;
 
         public CategoriesController()
         {
-            _context = new ApplicationDbContext();
+            dBcontext = new ApplicationDbContext();
         }
 
 
         // get all categroies
         public IEnumerable<CategoryDto> GetCategories()
         {
-            var categoriesDto = _context.Categories.ToList().Select(Mapper.Map<Category, CategoryDto>);
+            var categoriesDto = dBcontext.Categories.ToList().Select(Mapper.Map<Category, CategoryDto>);
             return categoriesDto;
         }
 
@@ -31,7 +31,7 @@ namespace Stocky.Controllers.Api
         // get specified category
         public IHttpActionResult GetCategory(int id)
         {
-            var category = _context.Categories.SingleOrDefault(p => p.Id == id);
+            var category = dBcontext.Categories.SingleOrDefault(p => p.Id == id);
 
             if (category == null)
             {
@@ -52,8 +52,8 @@ namespace Stocky.Controllers.Api
             }
 
             var category = Mapper.Map<CategoryDto, Category>(categoryDto);
-            _context.Categories.Add(category);
-            _context.SaveChanges();
+            dBcontext.Categories.Add(category);
+            dBcontext.SaveChanges();
 
             return Created(new Uri(Request.RequestUri + "/" + category.Id), category);
         }
@@ -68,7 +68,7 @@ namespace Stocky.Controllers.Api
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
             }
 
-            var categoryInDb = _context.Categories.SingleOrDefault(p => p.Id == id);
+            var categoryInDb = dBcontext.Categories.SingleOrDefault(p => p.Id == id);
 
             if (categoryInDb == null)
             {
@@ -77,22 +77,22 @@ namespace Stocky.Controllers.Api
 
             Mapper.Map(categoryDto, categoryInDb);
 
-            _context.SaveChanges();
+            dBcontext.SaveChanges();
         }
 
 
         [HttpDelete]
         public void DeleteCategory(int id)
         {
-            var categoryInDb = _context.Categories.SingleOrDefault(p => p.Id == id);
+            var categoryInDb = dBcontext.Categories.SingleOrDefault(p => p.Id == id);
 
             if (categoryInDb == null)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
 
-            _context.Categories.Remove(categoryInDb);
-            _context.SaveChanges();
+            dBcontext.Categories.Remove(categoryInDb);
+            dBcontext.SaveChanges();
         }
     }
 }

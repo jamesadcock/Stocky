@@ -13,19 +13,19 @@ namespace Stocky.Controllers.API
 {
     public class ProductsController : ApiController
     {
-        private ApplicationDbContext _context;
+        private ApplicationDbContext dBcontext;
 
         public ProductsController()
         {
-            _context = new ApplicationDbContext();
+            dBcontext = new ApplicationDbContext();
         }
 
 
         // returns all products in a category
         public IEnumerable<ProductDto> GetProducts(string category)
         {
-            _context.Configuration.ProxyCreationEnabled = false;
-            var products = _context.Products.Include(p => p.Categories).Where(p => p.Categories.Any(c => c.Name == category)).ToList();
+            dBcontext.Configuration.ProxyCreationEnabled = false;
+            var products = dBcontext.Products.Include(p => p.Categories).Where(p => p.Categories.Any(c => c.Name == category)).ToList();
             var productsDto =  products.Select(Mapper.Map<Product, ProductDto>);
             return productsDto;
         }
@@ -33,7 +33,7 @@ namespace Stocky.Controllers.API
         // returns specified product
         public IHttpActionResult GetProduct(int id)
         {
-            var product = _context.Products.SingleOrDefault(p => p.Id == id);
+            var product = dBcontext.Products.SingleOrDefault(p => p.Id == id);
 
             if (product == null)
             {
@@ -59,12 +59,12 @@ namespace Stocky.Controllers.API
             // attach categroies to dbcontext
             foreach (var categoryDto in productDto.Categories)
             {
-                var category = _context.Categories.Single(c => c.Id == categoryDto.Id);
+                var category = dBcontext.Categories.Single(c => c.Id == categoryDto.Id);
                 product.Categories.Add(category);
             }
 
-            _context.Products.Add(product);
-            _context.SaveChanges();
+            dBcontext.Products.Add(product);
+            dBcontext.SaveChanges();
 
             productDto.Id = product.Id;
             return Created(new Uri(Request.RequestUri + "/" + product.Id), productDto);
@@ -80,7 +80,7 @@ namespace Stocky.Controllers.API
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
             }
 
-            var productInDb = _context.Products.SingleOrDefault(p => p.Id == id);
+            var productInDb = dBcontext.Products.SingleOrDefault(p => p.Id == id);
 
             if (productInDb == null)
             {
@@ -94,25 +94,25 @@ namespace Stocky.Controllers.API
             // attach categroies to dbcontext
             foreach (var categoryDto in productDto.Categories)
             {
-                var category = _context.Categories.Single(c => c.Id == categoryDto.Id);
+                var category = dBcontext.Categories.Single(c => c.Id == categoryDto.Id);
                 productInDb.Categories.Add(category);
             }
 
-            _context.SaveChanges();
+            dBcontext.SaveChanges();
         }
 
         [HttpDelete]
         public void DeleteProduct(int id)
         {
-            var productInDb = _context.Products.SingleOrDefault(p => p.Id == id);
+            var productInDb = dBcontext.Products.SingleOrDefault(p => p.Id == id);
 
             if (productInDb == null)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
 
-            _context.Products.Remove(productInDb);
-            _context.SaveChanges();
+            dBcontext.Products.Remove(productInDb);
+            dBcontext.SaveChanges();
         }
     }
 }
